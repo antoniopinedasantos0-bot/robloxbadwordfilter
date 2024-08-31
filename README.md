@@ -46,4 +46,4 @@ Players.PlayerAdded:Connect(onPlayerAdded)
 ```
 
 ## License
-This repository is under the MIT License. Which can be reviewed [here](#LICENSE).
+This repository is under the MIT License. Which can be reviewed [here](LICENSE).
