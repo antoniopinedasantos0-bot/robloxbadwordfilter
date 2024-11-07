@@ -1,6 +1,8 @@
 # Bad Word Filter for Roblox
 This repository includes known and/or unknown bypassed and unfiltered Roblox words and letters that developers can use for custom in-experience chat systems to detect inappropriate chat behavior from players that bypass Roblox's built-in text chat filters.
 
+It's encouraged to always report inappropriate chat behavior to Roblox directly using the built-in [report abuse feature](https://en.help.roblox.com/hc/en-us/articles/203312410).
+
 > [!NOTE]
 > This filter list may subject to change at any given moment which may remove, add, or update existing or non-existing words in the list. This filter is also community-ran, meaning it is not 100% full proof nor is it 100% accurate.
 
@@ -12,30 +14,34 @@ An example in a server script would be
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
-local BLOCKLIST_URL : string = "https://raw.githubusercontent.com/MafuSaku/robloxbadwordfilter/main/blocklist.txt"
-local blocklist : { any }
+local BLOCKLIST_URL = "https://raw.githubusercontent.com/MafuSaku/robloxbadwordfilter/main/blocklist.txt"
+local blocklist
 
-local function getBlockList(blocklistUrl : string)  
-  local getSuccess, getResult = pcall(HttpService.GetAsync, HttpService, blocklistUrl, false)
-  
-  if getSuccess then
-    blocklist = string.split(getResult, ", ")
-  else
-    warn(`Failed to retrieve blocklist: {getResult}`)
+local function getBlocklist(url : string)
+  if url then
+		
+    local success, response = pcall(HttpService.GetAsync, HttpService, url, false)
+		
+    if success and response then
+      blocklist = string.split(response, ", ")
+    else
+      warn(`There was an error retrieving the blocklist! \nError: {response}`)
+    end
+
   end
-
 end
 
--- Kicks the player if found saying a word on the list
-local function onPlayerAdded(player: Player)
-  player.Chatted:Connect(function(message: string)
+local function onPlayerAdded(player : Player)
+
+  player.Chatted:Connect(function(message : string)
     if table.find(blocklist, message) then
-      player:Kick("You said a no no word!")
+      player:Kick("Please refrain from saying inappropriate words!")
     end
   end)
+	
 end
 
-getBlockList()
+getBlocklist(BLOCKLIST_URL)
 
 for _, player in Players:GetPlayers() do
   onPlayerAdded(player)
